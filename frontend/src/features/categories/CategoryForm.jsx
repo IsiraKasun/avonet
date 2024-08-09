@@ -10,25 +10,10 @@ import useFetchCategories from "../../hooks/useFetchCategories";
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 
-const ExpenseForm = ({setExpenseUpdated, categoryUpdated}) => {
+const CategoryForm = ({setCategoryUpdated, categoryUpdated}) => {
     const user = useSelector((state) => state.auth.user);
-  const { data, loading, error } = useFetchCategories('/catagories', categoryUpdated);
   
-  const [formData, setFormData] = useState({
-    category: "",
-    description: "",
-    amount: "",
-  });
-
-  useEffect(() => {
-    if (data && data.length) {
-        setFormData({
-            ...formData,
-            category: data[0]._id,
-          });
-    }
-  }, [data]);
-
+  const [categoryName, setCategoryName] = useState('');
   const [errors, setErrors] = useState({});
   const [succesMsg, setSuccessMsg] = useState('');
 
@@ -42,12 +27,10 @@ const ExpenseForm = ({setExpenseUpdated, categoryUpdated}) => {
 
       let configs = {
         method: "post",
-        url: "/expenses",
+        url: "/catagories",
         headers: {'authorization': user.token},
         data: {
-            desc: formData.description,
-            cat: formData.category,
-            amount: formData.amount
+            name: categoryName,
         },
       };
 
@@ -56,8 +39,10 @@ const ExpenseForm = ({setExpenseUpdated, categoryUpdated}) => {
       try {
         result = await callAPI(configs);
         if (result.status === 200) {
-          setExpenseUpdated((prev) => !prev);
-          setSuccessMsg('Expenses Added');
+          setSuccessMsg('Category Added');
+          setCategoryUpdated((prev) => !prev);
+          setCategoryName('');
+
           setTimeout(() => {
             setSuccessMsg('');
           }, 5000);
@@ -77,24 +62,12 @@ const ExpenseForm = ({setExpenseUpdated, categoryUpdated}) => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    let newValue = value;
-
-    if (name === 'amount') {
-        newValue = value.replace(/^[^0-9.]+$/g, '');
-    }
-
-    setFormData({
-      ...formData,
-      [name]: newValue,
-    });
+     setCategoryName(e.target.value);
   };
 
   const validate = () => {
     let formErrors = [];
-    if (!formData.description) formErrors.push("Description is required");
-
-    if (!formData.amount) formErrors.push("Amount is required");
+    if (!categoryName) formErrors.push("Catagory Name is required");
 
     return formErrors;
   };
@@ -102,38 +75,17 @@ const ExpenseForm = ({setExpenseUpdated, categoryUpdated}) => {
   return (
     <div className="flex flex-wrap flex-row items-center justify-between w-full">
       <div className="mb-6 w-full">
-        <h2 className="text-xl font-bold mb-4 ml-4 w-full text-center mt-4">Add Expense</h2>
+        <h2 className="text-xl font-bold mb-4 ml-4 w-full text-center mt-4">Add Catagory</h2>
 
         <form className="ml-4 w-full" onSubmit={handleSubmit}>
           <div className="flex flex-wrap flex-row items-center justify-start w-auto gap-4 ml-3">
-            <select className="select select-bordered w-full max-w-52 mb-3" value={formData.category}
-              onChange={handleChange}
-              name="category">
-              <option disabled value="-1">
-                Category
-              </option>
-              {data && data.length && data.map((cat) => (
-                 <option key={cat._id} value={cat._id}>{cat.name}</option>
-              ))}
-
-            </select>
-
             <input
               type="text"
-              placeholder="Description"
+              placeholder="Category Name"
               className="input input-bordered max-w-80 mb-3"
-              name="description"
-              value={formData.description}
+              name="categoryname"
+              value={categoryName}
               onChange={handleChange}
-            />
-
-            <input
-              type="text"
-              placeholder="Amount"
-              className="input input-bordered max-w-80 mb-3"
-              value={formData.amount}
-              onChange={handleChange}
-              name="amount"
             />
           </div>
           <div className="flex flex-wrap flex-row items-center justify-between w-full ml-3">
@@ -157,4 +109,4 @@ const ExpenseForm = ({setExpenseUpdated, categoryUpdated}) => {
   );
 };
 
-export default ExpenseForm;
+export default CategoryForm;

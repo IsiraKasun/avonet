@@ -31,6 +31,10 @@ app.use('/users', userRouter);
 app.use('/expenses', expenseRouter);
 app.use('/catagories', catagoryRouter);
 
+app.get('/test', (req, res) => {
+    res.send('Hello');
+})
+
 app.use((req, res, next) => { 
     res.status(404).json({sts: -1, error: 'Invalid URL or request method'});
 });

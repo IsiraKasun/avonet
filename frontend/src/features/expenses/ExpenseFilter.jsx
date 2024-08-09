@@ -11,13 +11,13 @@ import useFetchCategories from "../../hooks/useFetchCategories";
 
 const years = getLast15Years();
 
-const ExpenseFilter = ({setFilterCategory, setFilterMonth, setFilterYear}) => {
+const ExpenseFilter = ({setFilterCategory, setFilterMonth, setFilterYear, categoryUpdated}) => {
 
   const [year, setYear] = useState(new Date().getFullYear());
   const [monthsList, setMonthsList] = useState(getMonthsForYear(year));
   const [month, setMonth] = useState(monthsList.length - 1);
   const [catagory, setCategory] = useState('all');
-  const { data, loading, error } = useFetchCategories('/catagories');
+  const { data, loading, error } = useFetchCategories('/catagories', categoryUpdated);
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {

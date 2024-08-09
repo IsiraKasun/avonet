@@ -7,19 +7,19 @@ import { useDispatch } from "react-redux";
 import { login } from "../auth/authSlice";
 import useFetchExpenses from "../../hooks/useFetchExpenses";
 
-const ExpenseTable = ({ startDate, endDate, category }) => {
+const ExpenseTable = ({ startDate, endDate, category, expenseUpdated }) => {
   const { data, loading, error } = useFetchExpenses(
     "/expenses",
     category,
     startDate,
-    endDate
+    endDate,
+    expenseUpdated
   );
 
   return (
     <div className="flex flex-wrap flex-row items-center justify-between w-full">
-      <div className="overflow-x-auto w-full">
+      <div className="overflow-x-auto w-full max-h-72 overflow-y-auto">
         <table className="table">
-          {/* head */}
           <thead>
             <tr>
               <th></th>
@@ -30,17 +30,9 @@ const ExpenseTable = ({ startDate, endDate, category }) => {
             </tr>
           </thead>
           <tbody>
-            {data &&
-              data.length &&
-              data.map((row, index) => (
-                <tr className="hover" key={row._id}>
-                  <th>{index + 1}</th>
-                  <td>{row.date}</td>
-                  <td>{row.cat.name}</td>
-                  <td>{row.description}</td>
-                  <td>{row.amount}</td>
-                </tr>
-              ))}
+            {(data && data.length) ? data.map((row, index) => (
+                <tr className="hover" key={row._id}><td>{index + 1}</td><td>{row.date}</td><td>{row.cat.name}</td><td>{row.description}</td><td>{row.amount}</td></tr>
+              )): null}
           </tbody>
         </table>
       </div>

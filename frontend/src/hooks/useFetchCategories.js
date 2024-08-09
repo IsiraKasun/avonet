@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 
 const baseURL = configs.baseURL;
 
-const useFetchCategories = (url) => {
+const useFetchCategories = (url, categoryUpdated) => {
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
   let configs = {
@@ -36,7 +36,7 @@ const useFetchCategories = (url) => {
     };
 
     callAPI();
-  }, [url]);
+  }, [url, categoryUpdated]);
 
     
   return { data, loading, error };

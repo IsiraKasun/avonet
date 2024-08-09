@@ -32,3 +32,7 @@ export const getStartAndEndDate = (year, month) => {
   
     return { startDate, endDate };
 }
+
+export const getRandomColor = () => {
+   return Math.floor(Math.random() * 255) + 1;
+}

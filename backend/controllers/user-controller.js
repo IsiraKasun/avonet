@@ -30,10 +30,8 @@ exports.singup = async (req, res) => {
 
 exports.signin = async (req, res, next) => {
     const user = await User.login(req.body.email);
-    console.log(req.body.password);
-    console.log(user.password);
-    console.log(bcrypt.compareSync(req.body.password, user.password));
-    if (user && bcrypt.compareSync(req.body.password, user.password)) {
+
+    if (user && user.password && bcrypt.compareSync(req.body.password, user.password)) {
         let token = jwt.sign({userId: user.id}, process.env.JWT_SECRET, {expiresIn: '1d'});
         user.password = undefined; 
         user.token = token;

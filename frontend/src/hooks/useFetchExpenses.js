@@ -3,12 +3,15 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { configs } from '../app/appConfigs';
 import moment from 'moment';
+import { useDispatch } from 'react-redux';
+import { fill } from '../features/expenses/expenseSlice';
 
 const baseURL = configs.baseURL;
 
-const useFetchExpenses = (url, category, startDate, endDate) => {
+const useFetchExpenses = (url, category, startDate, endDate, expenseUpdated) => {
   const user = useSelector((state) => state.auth.user);
   const categories = useSelector((state) => state.cat.categories);
+  const dispatch = useDispatch();
   
   let configs = {
     baseURL: baseURL,
@@ -29,7 +32,7 @@ const useFetchExpenses = (url, category, startDate, endDate) => {
             const response = await axios(configs);
             let expenses = [];
 
-            if (response && response.data && response.data.expenses) {
+            if (response && response.data && response.data.expenses && categories && categories.length) {
                 expenses = response.data.expenses.map((row) => 
                 {
                     return {
@@ -41,6 +44,7 @@ const useFetchExpenses = (url, category, startDate, endDate) => {
             }
 
             setData(expenses);
+            dispatch(fill(expenses));
         }
       } catch (err) {
         setError(err);
@@ -50,7 +54,7 @@ const useFetchExpenses = (url, category, startDate, endDate) => {
     };
 
     callAPI();
-  }, [url, category, startDate, endDate]);
+  }, [url, category, startDate, endDate, categories, expenseUpdated]);
 
 
   return { data, loading, error };

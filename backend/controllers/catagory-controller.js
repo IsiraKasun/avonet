@@ -18,17 +18,24 @@ exports.getAll = async (req, res) => {
 
 exports.create = async (req, res) => {
     try {
+        let ownerId = req.user.userId;
+        let name = req.body.name;
+        let catagories = await Catagory.find({name: name, ownerId: ownerId}).exec();
 
-        let catagory = new Catagory({
-            ownerId: req.user.userId,
-            name: req.body.name
-        });
-
-        let savedDoc = await catagory.save();
+        if (catagories.length) {
+            res.status(400).json({sts: -1, error: 'Category Name already exists'});
+        } else {
+            let catagory = new Catagory({
+                ownerId: ownerId,
+                name: name
+            });
     
-        if (savedDoc) {
-            res.status(200).json({sts: 1, catagory: savedDoc});
-        } 
+            let savedDoc = await catagory.save();
+        
+            if (savedDoc) {
+                res.status(200).json({sts: 1, catagory: savedDoc});
+            } 
+        }
     } catch (error) {
         console.log(error);
         res.status(500).json({sts: -1, error: 'Internal Server Error'})
